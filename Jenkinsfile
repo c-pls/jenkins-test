@@ -1,11 +1,18 @@
 pipeline {
+    environment{
+        registry = "core-harbor.local/test"
+        registryCredential = "harbor_creds"
+        dockerImage = ''
+    }
     agent {
-        docker { image 'node:20.11.1-alpine3.19' }
+        dockerfile true
     }
     stages {
-        stage('Test') {
+        stage('Build') {
             steps {
-                sh 'node --version'
+                script {
+                    dockerImage = docker.build('your-image-name:latest', '-f Dockerfile .')
+                }
             }
         }
     }
