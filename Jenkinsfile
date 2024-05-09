@@ -1,16 +1,28 @@
 pipeline {
     environment{
-        registry = "core-harbor.local/test"
-        registryCredential = "harbor_creds"
+        registry = "core-harbor.local"
+        registryCredential = "harbor-credentials"
         dockerImage = ''
+        repo = "test"
+        imageTag = "latest"
     }
     agent any
     stages {
         stage('Build image') {
             steps {
                 script {
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
+                    dockerImage = docker.build registry + "/$repo"+ ":$imageTag"
                     }
+            }
+        }
+
+        stage('Deploy image') {
+            steps {
+                script {
+                    docker.withRegistry(registry, registryCredential){
+                        dockerImage.push()
+                    }
+                }
             }
         }
     }
