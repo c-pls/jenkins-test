@@ -4,14 +4,13 @@ pipeline {
         registryCredential = "harbor_creds"
         dockerImage = ''
     }
-    agent {
-        dockerfile true
-    }
+    agent any
     stages {
-        stage('Build') {
+        stage('Build image') {
             steps {
                 script {
-                    dockerImage = docker.build('your-image-name:latest', '-f Dockerfile .')
+                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
+        }
                 }
             }
         }
